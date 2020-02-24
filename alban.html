@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.3.2/dist/css/uikit.min.css" />
+	<title>Chat App</title>
+	<link rel="stylesheet" href="home.css" />
+</head>
+
+<body>
+	<div class="uk-navbar-container" uk-navbar>
+		<span class="uk-navbar-item uk7-logo">Chat</span>
+	</div>
+	<div id="alban" class="uk-card-default uk-card-body uk-margin-top" uk-grid>
+
+	</div>
+	<form>
+		<div class="uk-margin">
+			<input id="toto" class="uk-input uk-form-width-medium uk-form-large" type="text" placeholder="ecrir">
+		</div>
+
+
+	</form>
+	<p uk-margin>
+		<button id="msgbutton" class="uk-button uk-button-default">Envoyer</button>
+	</p>
+	<script src="https://cdn.scaledrone.com/scaledrone.min.js"></script>
+	<script>
+		let balise = document.getElementById("toto")
+		function createElement(elem) {
+			var template = document.createElement("template")
+			template.innerHTML = elem.trim()
+			return template.content.firstChild
+		}
+		let balise1 = document.getElementById("alban")
+		const drone = new Scaledrone('MJOsGmih6fyoeF4i');
+		const room = drone.subscribe('observable-chatroom');
+		let id
+		drone.on("open", () => {
+			UIkit.notification('Connecté', {pos:"top-right"})
+			id = drone.clientId
+		})
+		function createElement(elem) {
+			var template = document.createElement("template")
+			template.innerHTML = elem.trim()
+			return template.content.firstChild
+		}
+		function createBubble(msg, user) {
+			let msgContainer = document.getElementById("alban")
+			let el = createElement(`<div class="uk-width-1">        
+					<div class="${user.id === id ? 'uk-align-right bubble-me' : 'uk-align-left bubble-other'} bubble">            
+						${msg}        
+					</div>   
+				</div>`)
+				msgContainer.appendChild(el)
+				return el
+		}
+
+		room.on("data", (msg, member) => {
+		if (member.id !== id)        
+		document.getElementById("alban").appendChild(createBubble(msg.msg, member)) 
+		})
+		document.getElementById("msgbutton").onclick = (e) => {
+			let message = document.getElementById("toto")
+			drone.publish({
+					room: "observable-chatroom",        
+					message: {msg: message.value}    
+				})
+			document.getElementById("alban").appendChild
+			(createBubble(message.value, {id: id}))
+			message.value = ""
+		}
+
+
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.3.2/dist/js/uikit.min.js">
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.3.2/dist/js/uikit-icons.min.js">
+	</script>
+
+
+</body>
+
+</html>
